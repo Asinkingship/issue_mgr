@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Issues{% endblock title %}
+
+{% block content %}
+<h1>List of Issues</h1>
+{% for issue in issue_list %}
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">{{issue.title }}</h5>
+      <h6 class="card-subtitle mb-2 text-body-secondary">{{ issue.subtitle }}</h6>
+      <p class="card-text">{{issue.body|truncatechars:64 }}</p>
+      <a href="{% url 'detail' issue.id %}" class="card-link">Continue reading...</a>
+      <a href="{% url 'edit' issue.id %}" class="card-link">Edit</a>
+      {% if user.is_authenticated %}
+        {% if user == issue.author %}
+          <form method="POST" action="{% url 'update_to_draft' issue.id %}">
+            {% csrf_token %}
+            <input type="hidden" id="id_status" name="status" value="2"/>
+            <input type="submit" class="card-link" value="Draft"/>
+          </form>
+        {% endif %}
+      {% endif %}
+    </div>
+</div>
+<br />
+{% endfor %}
+{% endblock content %}
